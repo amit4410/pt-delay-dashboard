@@ -5,6 +5,18 @@ from pathlib import Path
 # Make "src" importable when running via `streamlit run src/app.py`
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+# Auto-generate synthetic data on first run (Streamlit Cloud)
+from src.config import DATA_RAW
+if not (DATA_RAW / "trips.csv").exists():
+    from src.generate_data import generate_all
+    generate_all()
+
+# Train model on first run if not present
+from src.config import MODELS_DIR
+if not (MODELS_DIR / "delay_rf.joblib").exists():
+    from src.model import train
+    train()
+
 import numpy as np
 import pandas as pd
 import plotly.express as px
